@@ -1,23 +1,22 @@
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         DatabaseManager.inicializarBanco();
 
-        // Buscando os dados salvos do arquivo SQLite
-        List<Produto> produtosDoBanco = DatabaseManager.listarTodos();
-        GerenciadorDeProdutos gerenciador = new GerenciadorDeProdutos(produtosDoBanco);
+        List<String> categoriasParaBuscar = Arrays.asList("Eletrônicos", "Móveis");
 
-        System.out.println("\n--- Produtos recuperados do SQLite ---");
-        produtosDoBanco.forEach(p -> System.out.println("- " + p.nome() + " (R$ " + p.preco() + ")"));
+        System.out.println("Iniciando buscas paralelas...");
+        long inicio = System.currentTimeMillis();
 
-        System.out.println("\nPreço médio geral do catálogo: R$ " + gerenciador.calcularPrecoMedio());
+        List<Produto> produtosEncontrados = LeituraParalela.buscarCategoriasEmParalelo(categoriasParaBuscar);
 
-        // Testando a busca por ID com Optional
-        Long idPesquisa = 1L;
-        DatabaseManager.buscarPorId(idPesquisa).ifPresentOrElse(
-            p -> System.out.println("\nProduto encontrado por ID " + idPesquisa + ": " + p.nome() + " (R$ " + p.preco() + ")"),
-            () -> System.out.println("\nProduto com ID " + idPesquisa + " não foi encontrado no banco.")
-        );
+        long fim = System.currentTimeMillis();
+
+        System.out.println("\n--- Produtos encontrados em paralelo ---");
+        produtosEncontrados.forEach(p -> System.out.println("- " + p.nome() + " (" + p.categoria() + ")"));
+        
+        System.out.println("\nTempo total de execução paralela: " + (fim - inicio) + " ms");
     }
 }
