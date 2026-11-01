@@ -1,23 +1,17 @@
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
-public class ExemploListas {
+public class ExemploFiltro {
     public static void main(String[] args) {
-        List<String> tecnologias = new ArrayList<>();
-        tecnologias.add("Java");
-        tecnologias.add("Spring Boot");
-        tecnologias.add("JavaScript");
-        tecnologias.add("SQL");
+        List<String> tecnologias = Arrays.asList("Java", "Spring Boot", "JavaScript", "SQL", "JUnit");
 
-        System.out.println("--- Lista Original ---");
-        for (String tech : tecnologias) {
-            System.out.println("- " + tech);
-        }
+        // Filtrar apenas as tecnologias que começam com a letra "J"
+        List<String> filtradas = tecnologias.stream()
+            .filter(tech -> tech.startsWith("J"))
+            .collect(Collectors.toList());
 
-        Collections.sort(tecnologias);
-
-        System.out.println("\n--- Lista Ordenada ---");
-        tecnologias.forEach(tech -> System.out.println("-> " + tech));
+        System.out.println("--- Tecnologias que começam com J ---");
+        filtradas.forEach(System.out::println);
     }
 }
